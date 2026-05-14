@@ -1,0 +1,255 @@
+﻿
+
+.notification-center {
+  position: relative;
+}
+
+.notification-bell {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748B;
+}
+
+.notification-bell:hover {
+  background-color: #F1F5F9;
+  color: #2563EB;
+}
+
+.notification-bell svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+}
+
+.unread-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #DC2626;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  width: 400px;
+  max-height: 600px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #E2E8F0;
+  background-color: #F8FAFC;
+}
+
+.notification-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0F172A;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #64748B;
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.close-btn:hover {
+  background-color: #E2E8F0;
+  color: #0F172A;
+}
+
+.notification-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid #E2E8F0;
+  transition: all 0.2s ease;
+}
+
+.notification-item:hover {
+  background-color: #F8FAFC;
+}
+
+.notification-item.unread {
+  background-color: #EFF6FF;
+  border-left: 3px solid #2563EB;
+  padding-left: 13px;
+}
+
+.notification-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notification-body h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0F172A;
+}
+
+.notification-body p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748B;
+  line-height: 1.4;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #94A3B8;
+  margin-top: 4px;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mark-read-btn,
+.delete-btn {
+  background: none;
+  border: 1px solid #E2E8F0;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  color: #64748B;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.mark-read-btn:hover {
+  background-color: #DCFCE7;
+  color: #166534;
+  border-color: #86EFAC;
+}
+
+.delete-btn:hover {
+  background-color: #FEE2E2;
+  color: #991B1B;
+  border-color: #FECACA;
+}
+
+.notification-empty {
+  padding: 40px 16px;
+  text-align: center;
+  color: #64748B;
+  font-size: 14px;
+}
+
+.notification-empty p {
+  margin: 0;
+}
+
+.notification-error {
+  padding: 16px;
+  color: #DC2626;
+  font-size: 13px;
+  text-align: center;
+  background-color: #FEE2E2;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.notification-footer {
+  padding: 12px 16px;
+  border-top: 1px solid #E2E8F0;
+  background-color: #F8FAFC;
+  display: flex;
+  justify-content: center;
+}
+
+.refresh-btn {
+  padding: 8px 16px;
+  background-color: white;
+  color: #2563EB;
+  border: 1px solid #2563EB;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+  background-color: #2563EB;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .notification-dropdown {
+    width: 320px;
+    right: -50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .notification-dropdown {
+    width: 280px;
+    right: -40px;
+  }
+}
+

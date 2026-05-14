@@ -1,0 +1,171 @@
+﻿.statistics-container {
+  padding: 40px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.statistics-header {
+  margin-bottom: 32px;
+}
+
+.statistics-header h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1F2937;
+  margin: 0 0 8px 0;
+}
+
+.statistics-header p {
+  font-size: 14px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 24px;
+  color: #6B7280;
+  font-size: 16px;
+}
+
+.error-message {
+  background-color: #FEE2E2;
+  border: 1px solid #FECACA;
+  color: #991B1B;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  background-color: #F9FAFB;
+  border-radius: 8px;
+  border: 1px dashed #D1D5DB;
+  color: #6B7280;
+}
+
+.statistics-table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.statistics-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  font-size: 14px;
+}
+
+.statistics-table thead {
+  background-color: #F9FAFB;
+  border-bottom: 2px solid #E5E7EB;
+}
+
+.statistics-table thead th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.statistics-table tbody tr {
+  border-bottom: 1px solid #E5E7EB;
+  transition: background-color 0.2s ease;
+}
+
+.statistics-table tbody tr:hover {
+  background-color: #F9FAFB;
+}
+
+.statistics-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.statistics-table tbody td {
+  padding: 16px;
+  color: #1F2937;
+}
+
+.offer-title {
+  font-weight: 500;
+  max-width: 250px;
+  word-break: break-word;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-pending {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.status-excellence {
+  background-color: #DBEAFE;
+  color: #0369A1;
+}
+
+.status-granted {
+  background-color: #DCFCE7;
+  color: #166534;
+}
+
+.winner-name {
+  font-weight: 500;
+  color: #1F2937;
+}
+
+.winner-score {
+  display: block;
+  font-size: 12px;
+  color: #6B7280;
+  font-weight: normal;
+  margin-top: 4px;
+}
+
+.no-winner {
+  color: #9CA3AF;
+}
+
+.pending-row {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .statistics-container {
+    padding: 24px 16px;
+  }
+
+  .statistics-header h2 {
+    font-size: 22px;
+  }
+
+  .statistics-table {
+    font-size: 12px;
+  }
+
+  .statistics-table thead th,
+  .statistics-table tbody td {
+    padding: 12px 8px;
+  }
+
+  .offer-title {
+    max-width: 120px;
+  }
+
+  .winner-score {
+    display: none;
+  }
+}
+

@@ -1,0 +1,290 @@
+﻿.applications-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.applications-header {
+  margin-bottom: 32px;
+}
+
+.applications-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 6px 0;
+}
+
+.applications-header p {
+  color: #64748B;
+  font-size: 14px;
+}
+
+.applications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.application-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: none;
+  transition: all 0.2s ease;
+  border: 1px solid #E2E8F0;
+  border-left: 4px solid #2563EB;
+}
+
+.application-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: none;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  gap: 15px;
+}
+
+.app-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0F172A;
+  margin: 0 0 3px 0;
+}
+
+.app-header p {
+  font-size: 13px;
+  color: #64748B;
+  margin: 0;
+}
+
+.app-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.app-status.pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.app-status.accepted {
+  background: #DCFCE7;
+  color: #166534;
+}
+
+.app-status.rejected {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.app-date {
+  font-size: 13px;
+  color: #95a5a6;
+  margin-top: 8px;
+}
+
+.app-details {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.score-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.breakdown-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.breakdown-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #ecf0f1;
+}
+
+.breakdown-item .label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.breakdown-item .value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #3498db;
+}
+
+.total-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: #3498db;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.total-score .label {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.total-score .value {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+
+.accepted-message {
+  padding: 15px;
+  background: #d4edda;
+  border-left: 4px solid #28a745;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #155724;
+  font-weight: 500;
+}
+
+.rejected-message {
+  padding: 15px;
+  background: #f8d7da;
+  border-left: 4px solid #f5222d;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #721c24;
+  font-weight: 500;
+}
+
+.app-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #E2E8F0;
+}
+
+.delete-btn {
+  padding: 10px 16px !important;
+  background: #FEE2E2 !important;
+  color: #991B1B !important;
+  border: 1px solid #FECACA !important;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background: #FCA5A5 !important;
+  border-color: #F87171 !important;
+  color: #7F1D1D !important;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+
+.delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #95a5a6;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: #bdc3c7;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: #7f8c8d;
+  font-size: 16px;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 15px 20px;
+  border-radius: 8px;
+  border-left: 4px solid #f5222d;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+  .applications-container {
+    padding: 20px 15px;
+  }
+
+  .applications-header h2 {
+    font-size: 22px;
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+
+  .breakdown-items {
+    grid-template-columns: 1fr;
+  }
+
+  .app-actions {
+    flex-direction: column;
+  }
+
+  .delete-btn {
+    width: 100%;
+  }
+}
+

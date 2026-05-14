@@ -1,0 +1,43 @@
+﻿.enterprise-table-wrap {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  overflow: auto;
+}
+
+.enterprise-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.enterprise-table th,
+.enterprise-table td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #E2E8F0;
+  color: #1F2937;
+}
+
+.enterprise-table th {
+  background: #F8FAFC;
+  color: #334155;
+  font-weight: 600;
+}
+
+.app-pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.app-accepted,
+.app-auto_selected {
+  background: #DCFCE7;
+  color: #166534;
+}
+
+.app-rejected {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+

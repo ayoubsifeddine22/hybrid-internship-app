@@ -1,0 +1,241 @@
+﻿
+.enterprise-home {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.welcome-section-enterprise {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  border-radius: 12px;
+  padding: 48px;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.welcome-content-enterprise h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.5px;
+}
+
+.welcome-content-enterprise p {
+  font-size: 16px;
+  color: #E0E7FF;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.how-to-post-section {
+  background: white;
+  border-radius: 8px;
+  padding: 40px;
+  border: 1px solid #E2E8F0;
+}
+
+.section-title-enterprise {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 32px 0;
+  letter-spacing: -0.3px;
+}
+
+.how-to-post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.how-to-post-card {
+  background: #F8FAFC;
+  padding: 28px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.how-to-post-card:hover {
+  background: #F1F5F9;
+  border-color: #2563EB;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+
+.step-number-enterprise {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 auto 16px;
+}
+
+.how-to-post-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 12px 0;
+}
+
+.how-to-post-card p {
+  font-size: 13px;
+  color: #64748B;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.scoring-rules-enterprise {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.scoring-rules-enterprise h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 16px 0;
+}
+
+.scoring-rules-enterprise p {
+  font-size: 14px;
+  color: #64748B;
+  line-height: 1.8;
+  margin: 0 0 12px 0;
+}
+
+.scoring-rules-enterprise p:last-child {
+  margin-bottom: 0;
+}
+
+.ai-feature-box-enterprise {
+  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+  border: 2px solid #2563EB;
+  border-radius: 8px;
+  padding: 24px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.ai-feature-content-enterprise {
+  flex: 1;
+}
+
+.ai-feature-content-enterprise h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0369A1;
+}
+
+.ai-feature-content-enterprise p {
+  margin: 0;
+  font-size: 14px;
+  color: #0369A1;
+  line-height: 1.6;
+}
+
+.posting-benefits {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 32px;
+}
+
+.posting-benefits h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 24px 0;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.benefit-item {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.benefit-item:hover {
+  border-color: #2563EB;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+}
+
+.benefit-icon {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.benefit-item h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 8px 0;
+}
+
+.benefit-item p {
+  font-size: 12px;
+  color: #64748B;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .welcome-section-enterprise {
+    padding: 32px 20px;
+  }
+
+  .welcome-content-enterprise h1 {
+    font-size: 24px;
+  }
+
+  .welcome-content-enterprise p {
+    font-size: 14px;
+  }
+
+  .how-to-post-section {
+    padding: 24px 20px;
+  }
+
+  .section-title-enterprise {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .how-to-post-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .how-to-post-card,
+  .posting-benefits {
+    padding: 20px;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
