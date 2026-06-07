@@ -1,4 +1,5 @@
 ﻿
+const { normalizeSkills, SKILL_MAP } = require('./normalizers');
 
 function calculateMatchScore(applicationData, offerData) {
   const skillsScore = calculateSkillsScore(applicationData.selected_skills || applicationData.selectedSkills, offerData.offer_skills || offerData.skillOptions);
@@ -47,9 +48,15 @@ function calculateSkillsScore(selectedSkills, skillOptions) {
 
   // Sum weights of selected skills
   selectedSkills.forEach(selectedSkill => {
-    const skillOption = skillsArray.find(
-      opt => opt.skill_name.toLowerCase() === selectedSkill.toLowerCase()
-    );
+    // Normalize the selected skill using SKILL_MAP
+    const normalizedSelected = (SKILL_MAP[selectedSkill.toLowerCase().trim()] || selectedSkill.toLowerCase().trim());
+    
+    const skillOption = skillsArray.find(opt => {
+      // Normalize the offer skill using SKILL_MAP
+      const normalizedOffer = (SKILL_MAP[opt.skill_name.toLowerCase().trim()] || opt.skill_name.toLowerCase().trim());
+      return normalizedOffer === normalizedSelected;
+    });
+    
     console.log(`Matching "${selectedSkill}":`, skillOption);
     if (skillOption) {
       const weight = parseFloat(skillOption.skill_weight); // Convert to number

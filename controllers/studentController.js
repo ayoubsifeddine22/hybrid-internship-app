@@ -2,6 +2,7 @@
 const { normalizeApplicationData } = require('../utils/normalizers');
 const { calculateMatchScore } = require('../utils/scoring');
 const { createNotification } = require('./notificationController');
+const { extractApplicationDataFromCV } = require('../utils/applicationCVParser');
 
 exports.getOffers = async (req, res) => {
   try {
@@ -10,6 +11,7 @@ exports.getOffers = async (req, res) => {
         io.id,
         io.title,
         io.description,
+        io.location,
         io.required_diploma,
         io.duration_weeks,
         io.salary_per_month,
@@ -60,6 +62,7 @@ exports.getOfferDetails = async (req, res) => {
         io.id,
         io.title,
         io.description,
+        io.location,
         io.required_diploma,
         io.duration_weeks,
         io.salary_per_month,
@@ -103,16 +106,79 @@ exports.getOfferDetails = async (req, res) => {
   }
 };
 
+exports.parseCV = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No PDF file uploaded' });
+    }
+
+    const { offer_id, offerLocation } = req.body;
+
+    if (!offer_id || !offerLocation) {
+      return res.status(400).json({
+        error: 'Offer ID and offer location are required'
+      });
+    }
+
+    // Fetch the offer's required skills from DB
+    const [offerSkillsRows] = await pool.query(
+      'SELECT skill_name FROM offer_skills_detailed WHERE offer_id = ?',
+      [offer_id]
+    );
+    const offerSkills = offerSkillsRows.map(row => row.skill_name);
+
+    if (offerSkills.length === 0) {
+      return res.status(400).json({
+        error: 'This offer has no required skills defined'
+      });
+    }
+
+    console.log('[CV Parser] Received PDF file, extracting text...');
+    
+    const cvParseResult = await extractApplicationDataFromCV(
+      req.file.buffer,
+      {
+        apiKey: process.env.OPENROUTER_API_KEY,
+        offerLocation: offerLocation,
+        offerSkills: offerSkills   
+      }
+    );
+
+    if (!cvParseResult.success) {
+      return res.status(400).json({
+        error: 'Failed to parse CV',
+        details: cvParseResult.error
+      });
+    }
+
+    // cvParseResult.data.selected_skills now contains only skills that were found in CV
+    return res.json({
+      success: true,
+      data: cvParseResult.data,
+      usage: cvParseResult.usage
+    });
+  } catch (error) {
+    console.error('[CV Parser] Error:', error);
+    res.status(500).json({
+      error: 'CV parsing failed',
+      details: error.message
+    });
+  }
+};
+
 exports.submitApplication = async (req, res) => {
   const connection = await pool.getConnection();
 
   try {
-    const { offer_id, diploma_level, selected_skills, distance_range } = req.body;
     const user_id = req.user.user_id; // From JWT middleware
+    const { offer_id, diploma_level, selected_skills, distance_range } = req.body;
 
     // ===== VALIDATION =====
     if (!offer_id || !diploma_level || !selected_skills || !distance_range) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({
+        error: 'Missing required fields',
+        details: 'Must provide: offer_id, diploma_level, selected_skills, distance_range'
+      });
     }
 
     // ===== GET STUDENT PROFILE ID =====

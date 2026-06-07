@@ -398,4 +398,96 @@
     font-size: 18px;
   }
 }
+.fill-method-toggle {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #E2E8F0;
+  padding-bottom: 12px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 10px 16px;
+  background-color: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #64748B;
+  background-color: #F1F5F9;
+}
+
+.toggle-btn.active {
+  background-color: #2563EB;
+  color: white;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.toggle-btn:hover:not(.active) {
+  background-color: #E2E8F0;
+  color: #0F172A;
+}
+
+/* CV upload area */
+.cv-upload-area {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.cv-upload-area input[type="file"] {
+  padding: 12px;
+  border: 1px dashed #CBD5E1;
+  border-radius: 6px;
+  background-color: #F8FAFC;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.cv-upload-area input[type="file"]:hover {
+  border-color: #2563EB;
+  background-color: #EFF6FF;
+}
+
+.parse-cv-button {
+  padding: 10px 16px;
+  background-color: #2563EB;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.parse-cv-button:hover:not(:disabled) {
+  background-color: #1D4ED8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.parse-cv-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.loading-message {
+  padding: 12px;
+  background-color: #EFF6FF;
+  color: #1E40AF;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
 

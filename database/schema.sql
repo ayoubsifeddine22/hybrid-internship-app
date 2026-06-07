@@ -156,6 +156,7 @@ CREATE TABLE internship_offers (
   -- Offer Details
   title VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
+  location VARCHAR(255),  -- Internship location
   
   -- Requirements
   required_diploma ENUM('high_school', '2nd_year', 'bachelor', 'master') NOT NULL,
@@ -429,3 +430,10 @@ CREATE TABLE admin_logs (
 -- AUTO-GRANT THRESHOLD:
 --   - If total_score >= 0.8: Application automatically accepted
 --   - Otherwise: Enters queue, highest score wins when deadline expires
+
+-- =====================================================
+-- MIGRATION: Add location column to internship_offers (if not exists)
+-- =====================================================
+-- Run this if you have an existing database and need to add the location column
+-- ALTER TABLE internship_offers ADD COLUMN location VARCHAR(255) AFTER description;
+

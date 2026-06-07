@@ -41,6 +41,16 @@ export const studentAPI = {
   updateEducation: (data) => API.put('/student/profile/education', data),
   updateLocation: (data) => API.put('/student/profile/location', data),
   updateSkills: (skills) => API.put('/student/profile/skills', { skills }),
+
+  parseCV: (file, offerId, offerLocation) => {
+  const formData = new FormData();
+  formData.append('cv', file);
+  formData.append('offer_id', offerId);
+  formData.append('offerLocation', offerLocation);
+  return API.post('/student/parse-cv', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+},
 };
 
 // ===== ENTERPRISE ENDPOINTS =====

@@ -13,6 +13,8 @@ const EnterpriseOffers = () => {
   const [saving, setSaving] = useState(false);
   const [editingOfferId, setEditingOfferId] = useState(null);
   const [selectedOfferId, setSelectedOfferId] = useState(null);
+  const [applicants, setApplicants] = useState([]);
+  const [applicantsLoading, setApplicantsLoading] = useState(false);
 
   const [form, setForm] = useState({
     title: '',
@@ -22,12 +24,24 @@ const EnterpriseOffers = () => {
     salaryPerMonth: '',
     deadline: '',
     startDate: '',
+    location: '',
     skills: [emptySkill()]
   });
 
   useEffect(() => {
     fetchOffers();
   }, []);
+
+  useEffect(() => {
+    if (selectedOfferId) {
+      const offer = offers.find(o => o.id === selectedOfferId);
+      if (offer && (offer.status === 'closed' || offer.status === 'filled')) {
+        fetchApplicants(selectedOfferId);
+      } else {
+        setApplicants([]);
+      }
+    }
+  }, [selectedOfferId, offers]);
 
   const fetchOffers = async () => {
     try {
@@ -42,6 +56,48 @@ const EnterpriseOffers = () => {
     }
   };
 
+  const fetchApplicants = async (offerId) => {
+    try {
+      setApplicantsLoading(true);
+      const response = await enterpriseAPI.getOfferApplications(offerId);
+      setApplicants(response.data.applications || []);
+    } catch (err) {
+      console.error('Failed to load applicants:', err);
+      setApplicants([]);
+    } finally {
+      setApplicantsLoading(false);
+    }
+  };
+
+  const getApplicantLabel = (applicant) => {
+    const score = applicant.total_score || 0;
+    
+    // Auto-granted by excellence (score > 0.80)
+    if (score > 0.80) {
+      return { label: 'Granted by Excellence', className: 'status-granted-excellence' };
+    }
+    
+    // Check application status
+    if (applicant.status === 'accepted' || applicant.status === 'auto_selected') {
+      return { label: 'Granted', className: 'status-granted' };
+    }
+    
+    if (applicant.status === 'rejected') {
+      return { label: 'Rejected', className: 'status-rejected' };
+    }
+    
+    // Default: pending
+    return { label: 'Pending', className: 'status-pending' };
+  };
+
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const resetForm = () => {
     setForm({
       title: '',
@@ -51,6 +107,7 @@ const EnterpriseOffers = () => {
       salaryPerMonth: '',
       deadline: '',
       startDate: '',
+      location: '',
       skills: [emptySkill()]
     });
   };
@@ -81,7 +138,7 @@ const EnterpriseOffers = () => {
       return;
     }
 
-    if (totalWeight !== 1) {
+    if (Math.abs(totalWeight - 1.0) > 0.01) {
       setError(`Total skill weights must equal exactly 1.0 (currently ${totalWeight.toFixed(2)})`);
       return;
     }
@@ -97,8 +154,8 @@ const EnterpriseOffers = () => {
         start_date: form.startDate && !form.startDate.includes('Missing') ? form.startDate : undefined,
         duration_weeks: form.durationWeeks && !form.durationWeeks.includes('Missing') ? Number(form.durationWeeks) : undefined,
         salary_per_month: form.salaryPerMonth && !form.salaryPerMonth.includes('Missing') ? Number(form.salaryPerMonth) : undefined,
-        skills,
-        location: ''
+        location: form.location.trim(),
+        skills
       };
 
       if (editingOfferId) {
@@ -164,6 +221,7 @@ const EnterpriseOffers = () => {
       salaryPerMonth: offer.salary_per_month ? String(offer.salary_per_month) : 'Missing, add salary',
       deadline: applicationDeadline || 'Missing, add deadline',
       startDate: startDate || 'Missing, add start date',
+      location: offer.location || '',
       skills: processedSkills
     });
     setEditingOfferId(offer.id);
@@ -226,8 +284,9 @@ const EnterpriseOffers = () => {
               <div className="form-group"><label>Required Diploma</label><select value={form.requiredDiploma} onChange={(e) => setForm((prev) => ({ ...prev, requiredDiploma: e.target.value }))}><option value="high_school">High School</option><option value="2nd_year">2nd Year</option><option value="bachelor">Bachelor</option><option value="master">Master</option></select></div>
               <div className="form-group"><label>Duration (weeks)</label><input type="number" min="1" value={form.durationWeeks} onChange={(e) => setForm((prev) => ({ ...prev, durationWeeks: e.target.value }))} /></div>
               <div className="form-group"><label>Salary / Month</label><input type="number" min="0" step="0.01" value={form.salaryPerMonth} onChange={(e) => setForm((prev) => ({ ...prev, salaryPerMonth: e.target.value }))} /></div>
-              <div className="form-group"><label>Application Deadline</label><input type="date" value={form.deadline} onChange={(e) => setForm((prev) => ({ ...prev, deadline: e.target.value }))} required /></div>
-              <div className="form-group"><label>Start Date</label><input type="date" value={form.startDate} onChange={(e) => setForm((prev) => ({ ...prev, startDate: e.target.value }))} /></div>
+              <div className="form-group"><label>Application Deadline</label><input type="date" min={getTodayDate()} value={form.deadline} onChange={(e) => setForm((prev) => ({ ...prev, deadline: e.target.value }))} required /></div>
+              <div className="form-group"><label>Start Date</label><input type="date" min={getTodayDate()} value={form.startDate} onChange={(e) => setForm((prev) => ({ ...prev, startDate: e.target.value }))} /></div>
+              <div className="form-group"><label>Offer Location</label><input type="text" placeholder="e.g., San Francisco, CA" value={form.location} onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))} required /></div>
             </div>
 
             <div className="form-group">
@@ -266,9 +325,10 @@ const EnterpriseOffers = () => {
         // Detail view for selected offer
         offers.find(o => o.id === selectedOfferId) && (() => {
           const offer = offers.find(o => o.id === selectedOfferId);
+          
           return (
             <div className="enterprise-offer-detail">
-              <button className="btn-back" onClick={() => setSelectedOfferId(null)}>← Back to List</button>
+              <button className="btn-back" onClick={() => { setSelectedOfferId(null); setApplicants([]); }}>← Back to List</button>
 
               <div className="detail-header">
                 <div>
@@ -298,6 +358,10 @@ const EnterpriseOffers = () => {
                   <div className="detail-item">
                     <span className="detail-label">Diploma Required:</span>
                     <span className="detail-value">{offer.required_diploma || '-'}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Location:</span>
+                    <span className="detail-value">{offer.location || '-'}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Application Deadline:</span>
@@ -343,6 +407,43 @@ const EnterpriseOffers = () => {
                         );
                       })}
                     </div>
+                  </div>
+                )}
+
+                {(offer.status === 'closed' || offer.status === 'filled') && (
+                  <div className="detail-section">
+                    <h3>Applicants Ranking</h3>
+                    {applicantsLoading ? (
+                      <p className="applicants-loading">Loading applicants...</p>
+                    ) : applicants.length === 0 ? (
+                      <p className="applicants-empty">No applicants for this offer.</p>
+                    ) : (
+                      <div className="applicants-ranking">
+                        {applicants.map((applicant, index) => {
+                          const statusInfo = getApplicantLabel(applicant);
+                          return (
+                            <div key={applicant.id} className="applicant-row">
+                              <div className="applicant-rank">{index + 1}</div>
+                              <div className="applicant-info">
+                                <div className="applicant-name">{applicant.full_name}</div>
+                                <div className="applicant-email">{applicant.email}</div>
+                                <div className="applicant-scores">
+                                  <span>Skills: {(applicant.skills_score * 100).toFixed(0)}%</span>
+                                  <span>Diploma: {(applicant.diploma_score * 100).toFixed(0)}%</span>
+                                  <span>Location: {(applicant.location_score * 100).toFixed(0)}%</span>
+                                </div>
+                              </div>
+                              <div className="applicant-score">
+                                {(applicant.total_score * 100).toFixed(1)}%
+                              </div>
+                              <div className={`applicant-status ${statusInfo.className}`}>
+                                {statusInfo.label}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

@@ -48,7 +48,7 @@ exports.createOffer = async (req, res) => {
 
     // Calculate total weight and validate
     const totalWeight = skills.reduce((sum, skill) => sum + (skill.weight || 0), 0);
-    if (Math.abs(totalWeight - 1.0) > 0.001) { // Allow 0.001 floating point tolerance
+    if (Math.abs(totalWeight - 1.0) > 0.01) { // Allow 0.01 floating point tolerance for decimal precision
       return res.status(400).json({
         error: `Total skill weights must equal exactly 1.0 (currently ${totalWeight.toFixed(2)})`,
         total_weight: totalWeight
@@ -62,13 +62,14 @@ exports.createOffer = async (req, res) => {
       // ===== CREATE OFFER =====
       const [offerResult] = await connection.query(
         `INSERT INTO internship_offers
-         (enterprise_id, title, description, required_diploma,
+         (enterprise_id, title, description, location, required_diploma,
           duration_weeks, salary_per_month, application_deadline, start_date, status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'open')`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')`,
         [
           enterprise_id,
           title,
           description,
+          location || null,
           diploma_required,
           duration_weeks || null,
           salary_per_month || null,
@@ -138,6 +139,7 @@ exports.getOffers = async (req, res) => {
         io.id,
         io.title,
         io.description,
+        io.location,
         io.required_diploma,
         io.duration_weeks,
         io.salary_per_month,
@@ -187,6 +189,7 @@ exports.getOfferDetails = async (req, res) => {
         id,
         title,
         description,
+        location,
         required_diploma,
         duration_weeks,
         salary_per_month,
@@ -377,6 +380,7 @@ exports.updateOffer = async (req, res) => {
     const {
       title,
       description,
+      location,
       diploma_required,
       deadline,
       start_date,
@@ -413,6 +417,7 @@ exports.updateOffer = async (req, res) => {
        SET
          title = COALESCE(?, title),
          description = COALESCE(?, description),
+         location = COALESCE(?, location),
          required_diploma = COALESCE(?, required_diploma),
          application_deadline = COALESCE(?, application_deadline),
          start_date = COALESCE(?, start_date),
@@ -420,7 +425,7 @@ exports.updateOffer = async (req, res) => {
          salary_per_month = COALESCE(?, salary_per_month),
          status = COALESCE(?, status)
        WHERE id = ? AND enterprise_id = ?`,
-      [title, description, diploma_required, deadline, start_date, duration_weeks, salary_per_month, status, id, enterprise_id]
+      [title, description, location, diploma_required, deadline, start_date, duration_weeks, salary_per_month, status, id, enterprise_id]
     );
 
     if (result.affectedRows === 0) {
@@ -459,6 +464,7 @@ exports.updateOffer = async (req, res) => {
         id,
         title,
         description,
+        location,
         required_diploma,
         duration_weeks,
         salary_per_month,

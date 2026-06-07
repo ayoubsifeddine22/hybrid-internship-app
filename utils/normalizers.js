@@ -66,6 +66,45 @@ const DIPLOMA_MAP = {
   'doctorate': 4
 };
 
+// Common Moroccan city name corrections
+const MOROCCAN_CITY_MAP = {
+  'berrechide': 'Berrechid',
+  'casablanca': 'Casablanca',
+  'rabate': 'Rabat',
+  'fese': 'Fes',
+  'fèz': 'Fes',
+  'fez': 'Fes',
+  'marrakéch': 'Marrakech',
+  'marrakech': 'Marrakech',
+  'tangere': 'Tanger',
+  'tangier': 'Tanger',
+  'agadire': 'Agadir',
+  'mohammadia': 'Mohammedia',
+  'mohammédia': 'Mohammedia',
+  // Casablanca neighborhoods
+'lissasfa': 'Casablanca',
+'maarif': 'Casablanca',
+'ain chock': 'Casablanca',
+'ain sebaa': 'Casablanca',
+'hay hassani': 'Casablanca',
+'sidi bernoussi': 'Casablanca',
+'ben msik': 'Casablanca',
+'sbata': 'Casablanca',
+// Rabat neighborhoods
+'hay riad': 'Rabat',
+'agdal': 'Rabat',
+'souissi': 'Rabat',
+};
+
+function normalizeCityName(city) {
+  if (!city || typeof city !== 'string') return null;
+  const key = city.toLowerCase().trim()
+    .normalize('NFD')                    // decompose accents
+    .replace(/[\u0300-\u036f]/g, '')     // strip accent marks
+    .trim();
+  return MOROCCAN_CITY_MAP[key] || city.trim();
+}
+
 function normalizeSkills(skillsArray) {
   if (!Array.isArray(skillsArray)) {
     return [];
@@ -186,7 +225,9 @@ module.exports = {
   normalizeDiploma,
   normalizeDistance,
   normalizeApplicationData,
+  normalizeCityName,
   SKILL_MAP,
-  DIPLOMA_MAP
+  DIPLOMA_MAP,
+  MOROCCAN_CITY_MAP
 };
 

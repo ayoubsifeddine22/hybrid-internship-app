@@ -118,7 +118,7 @@ exports.getAllOffers = async (req, res) => {
   try {
     const { status, enterprise_id } = req.query;
 
-    let query = `SELECT io.id, io.title, io.enterprise_id, ep.company_name, io.required_diploma,
+    let query = `SELECT io.id, io.title, io.location, io.enterprise_id, ep.company_name, io.required_diploma,
                         io.status, io.application_deadline, io.created_at
                  FROM internship_offers io
                  JOIN enterprise_profiles ep ON io.enterprise_id = ep.id

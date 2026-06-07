@@ -9,7 +9,7 @@ const OfferDetail = () => {
   const [offer, setOffer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [applicationStatus, setApplicationStatus] = useState(null); // 'already_applied', 'submitted', etc.
+  const [applicationStatus, setApplicationStatus] = useState(null);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [applicationData, setApplicationData] = useState({
     diploma_level: '',
@@ -19,6 +19,12 @@ const OfferDetail = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+
+  // CV parsing states
+  const [fillMethod, setFillMethod] = useState('manual'); // 'manual' or 'cv'
+  const [cvFile, setCvFile] = useState(null);
+  const [parsingLoading, setParsingLoading] = useState(false);
+  const [parseError, setParseError] = useState(null);
 
   useEffect(() => {
     loadOfferDetails();
@@ -31,16 +37,9 @@ const OfferDetail = () => {
       setOffer(response.data.offer);
       setError(null);
 
-      // Check if user has already applied to this offer
-      try {
-        const applicationsResponse = await studentAPI.getApplications();
-        const hasApplied = applicationsResponse.data.applications.some(app => app.offer_id === parseInt(id));
-        if (hasApplied) {
-          setApplicationStatus('already_applied');
-        }
-      } catch (err) {
-        console.error('Error checking applications:', err);
-      }
+      const applicationsResponse = await studentAPI.getApplications();
+      const hasApplied = applicationsResponse.data.applications.some(app => app.offer_id === parseInt(id));
+      if (hasApplied) setApplicationStatus('already_applied');
     } catch (err) {
       console.error('Error loading offer:', err);
       setError('Failed to load offer details. Please try again.');
@@ -51,9 +50,7 @@ const OfferDetail = () => {
 
   const handleApplicationChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     if (name === 'selected_skills') {
-      // Handle multi-select for skills
       if (checked) {
         setApplicationData(prev => ({
           ...prev,
@@ -66,23 +63,64 @@ const OfferDetail = () => {
         }));
       }
     } else {
-      setApplicationData(prev => ({
-        ...prev,
-        [name]: value
-      }));
+      setApplicationData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      setCvFile(file);
+      setParseError(null);
+    } else {
+      setCvFile(null);
+      setParseError('Please select a valid PDF file.');
+    }
+  };
+
+  const handleParseCV = async () => {
+    if (!cvFile) {
+      setParseError('Please choose a PDF file first.');
+      return;
+    }
+    const offerLocation = offer?.location || offer?.company_location || '';
+    if (!offerLocation) {
+      setParseError('Offer location is missing. Cannot calculate distance range.');
+      return;
+    }
+
+    setParsingLoading(true);
+    setParseError(null);
+    try {
+      const response = await studentAPI.parseCV(cvFile, offer.id, offerLocation);
+      const parsed = response.data.data;
+
+      setApplicationData({
+        diploma_level: parsed.diploma_level,
+        selected_skills: parsed.selected_skills,
+        distance_range: parsed.distance_range
+      });
+      // Switch back to manual mode to show the filled form
+      setFillMethod('manual');
+      setCvFile(null);
+      const fileInput = document.getElementById('cv-upload-input');
+      if (fileInput) fileInput.value = '';
+    } catch (err) {
+      console.error('CV parsing error:', err);
+      const errorMsg = err.response?.data?.details || err.response?.data?.error || 'Failed to parse CV. Please try again.';
+      setParseError(errorMsg);
+    } finally {
+      setParsingLoading(false);
     }
   };
 
   const handleSubmitApplication = async (e) => {
     e.preventDefault();
     setSubmitError(null);
-
-    // Validate form
     if (!applicationData.diploma_level || applicationData.selected_skills.length === 0 || !applicationData.distance_range) {
       setSubmitError('Please fill in all required fields');
       return;
     }
-
     try {
       setSubmitting(true);
       await studentAPI.submitApplication({
@@ -99,7 +137,6 @@ const OfferDetail = () => {
         selected_skills: [],
         distance_range: ''
       });
-      // Reset success message after 3 seconds
       setTimeout(() => setSubmitSuccess(false), 3000);
     } catch (err) {
       console.error('Error submitting application:', err);
@@ -110,44 +147,26 @@ const OfferDetail = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="offer-detail-container">
-        <div className="loading-state">Loading offer details...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="offer-detail-container">
-        <button className="back-button" onClick={() => navigate(-1)}>← Back</button>
-        <div className="error-state">{error}</div>
-      </div>
-    );
-  }
-
-  if (!offer) {
-    return (
-      <div className="offer-detail-container">
-        <button className="back-button" onClick={() => navigate(-1)}>← Back</button>
-        <div className="error-state">Offer not found.</div>
-      </div>
-    );
-  }
+  if (loading) return <div className="offer-detail-container"><div className="loading-state">Loading offer details...</div></div>;
+  if (error) return (
+    <div className="offer-detail-container">
+      <button className="back-button" onClick={() => navigate(-1)}>← Back</button>
+      <div className="error-state">{error}</div>
+    </div>
+  );
+  if (!offer) return (
+    <div className="offer-detail-container">
+      <button className="back-button" onClick={() => navigate(-1)}>← Back</button>
+      <div className="error-state">Offer not found.</div>
+    </div>
+  );
 
   return (
     <div className="offer-detail-container">
       <button className="back-button" onClick={() => navigate(-1)}>← Back</button>
-
-      {submitSuccess && (
-        <div className="success-message">
-          Application submitted successfully!
-        </div>
-      )}
+      {submitSuccess && <div className="success-message">Application submitted successfully!</div>}
 
       <div className="offer-detail-content">
-        {}
         <div className="offer-header-detail">
           <div className="header-left">
             <h1>{offer.title}</h1>
@@ -169,13 +188,11 @@ const OfferDetail = () => {
         </div>
 
         <div className="offer-detail-grid">
-          {}
           <div className="offer-main">
-            {}
             <div className="quick-info">
               <div className="info-item">
                 <span className="info-label">Location</span>
-                <span className="info-value">{offer.company_location}</span>
+                <span className="info-value">{offer.location || offer.company_location || 'Not specified'}</span>
               </div>
               <div className="info-item">
                 <span className="info-label">Salary</span>
@@ -190,14 +207,10 @@ const OfferDetail = () => {
                 <span className="info-value">{offer.required_diploma ? offer.required_diploma.replace('_', ' ').toUpperCase() : 'Not specified'}</span>
               </div>
             </div>
-
-            {}
             <div className="section">
               <h2>About the Role</h2>
               <p>{offer.description}</p>
             </div>
-
-            {}
             {offer.skills && offer.skills.length > 0 && (
               <div className="section">
                 <h2>Required Skills</h2>
@@ -210,82 +223,113 @@ const OfferDetail = () => {
             )}
           </div>
 
-          {}
           {showApplicationForm && (
             <div className="application-form-sidebar">
               <div className="application-form">
                 <h3>Apply for this position</h3>
-                {submitError && (
-                  <div className="error-message-inline">
-                    {submitError}
-                  </div>
-                )}
-                <form onSubmit={handleSubmitApplication}>
-                  <div className="form-group">
-                    <label htmlFor="diploma_level">Education Level *</label>
-                    <select
-                      id="diploma_level"
-                      name="diploma_level"
-                      value={applicationData.diploma_level}
-                      onChange={handleApplicationChange}
-                      required
-                    >
-                      <option value="">Select your education level</option>
-                      <option value="high_school">High School</option>
-                      <option value="2nd_year">2nd Year</option>
-                      <option value="bachelor">Bachelor's Degree</option>
-                      <option value="master">Master's Degree</option>
-                    </select>
-                  </div>
 
-                  <div className="form-group">
-                    <label>Required Skills *</label>
-                    <div className="skills-checkbox-group">
-                      {offer.skills && offer.skills.length > 0 ? (
-                        offer.skills.map((skill) => (
-                          <label key={skill.skill_name} className="checkbox-label">
-                            <input
-                              type="checkbox"
-                              name="selected_skills"
-                              value={skill.skill_name}
-                              checked={applicationData.selected_skills.includes(skill.skill_name)}
-                              onChange={handleApplicationChange}
-                            />
-                            <span>{skill.skill_name}</span>
-                          </label>
-                        ))
-                      ) : (
-                        <p>No skills listed for this offer</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="distance_range">Preferred Distance *</label>
-                    <select
-                      id="distance_range"
-                      name="distance_range"
-                      value={applicationData.distance_range}
-                      onChange={handleApplicationChange}
-                      required
-                    >
-                      <option value="">Select distance range</option>
-                      <option value="exact">Exact Location</option>
-                      <option value="0_50km">0-50 km</option>
-                      <option value="50_100km">50-100 km</option>
-                      <option value="100_200km">100-200 km</option>
-                      <option value="200km_plus">200+ km</option>
-                    </select>
-                  </div>
-
+                {/* Toggle buttons */}
+                <div className="fill-method-toggle">
                   <button
-                    type="submit"
-                    className="submit-button"
-                    disabled={submitting}
+                    type="button"
+                    className={`toggle-btn ${fillMethod === 'manual' ? 'active' : ''}`}
+                    onClick={() => setFillMethod('manual')}
                   >
-                    {submitting ? 'Submitting...' : 'Submit Application'}
+                    Fill manually
                   </button>
-                </form>
+                  <button
+                    type="button"
+                    className={`toggle-btn ${fillMethod === 'cv' ? 'active' : ''}`}
+                    onClick={() => setFillMethod('cv')}
+                  >
+                    Upload CV
+                  </button>
+                </div>
+
+                {fillMethod === 'cv' ? (
+                  <div className="cv-upload-area">
+                    <input
+                      id="cv-upload-input"
+                      type="file"
+                      accept="application/pdf"
+                      onChange={handleFileChange}
+                      disabled={parsingLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleParseCV}
+                      disabled={parsingLoading || !cvFile}
+                      className="parse-cv-button"
+                    >
+                      {parsingLoading ? 'Parsing...' : 'Parse CV'}
+                    </button>
+                    {parseError && <div className="error-message-inline">{parseError}</div>}
+                    {parsingLoading && <div className="loading-message">Analyzing your CV...</div>}
+                  </div>
+                ) : (
+                  <>
+                    {submitError && <div className="error-message-inline">{submitError}</div>}
+                    <form onSubmit={handleSubmitApplication}>
+                      <div className="form-group">
+                        <label htmlFor="diploma_level">Education Level *</label>
+                        <select
+                          id="diploma_level"
+                          name="diploma_level"
+                          value={applicationData.diploma_level}
+                          onChange={handleApplicationChange}
+                          required
+                        >
+                          <option value="">Select your education level</option>
+                          <option value="high_school">High School</option>
+                          <option value="2nd_year">2nd Year</option>
+                          <option value="bachelor">Bachelor's Degree</option>
+                          <option value="master">Master's Degree</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label>Required Skills *</label>
+                        <div className="skills-checkbox-group">
+                          {offer.skills && offer.skills.length > 0 ? (
+                            offer.skills.map((skill) => (
+                              <label key={skill.skill_name} className="checkbox-label">
+                                <input
+                                  type="checkbox"
+                                  name="selected_skills"
+                                  value={skill.skill_name}
+                                  checked={applicationData.selected_skills.includes(skill.skill_name)}
+                                  onChange={handleApplicationChange}
+                                />
+                                <span>{skill.skill_name}</span>
+                              </label>
+                            ))
+                          ) : (
+                            <p>No skills listed for this offer</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="distance_range">Preferred Distance *</label>
+                        <select
+                          id="distance_range"
+                          name="distance_range"
+                          value={applicationData.distance_range}
+                          onChange={handleApplicationChange}
+                          required
+                        >
+                          <option value="">Select distance range</option>
+                          <option value="exact">Exact Location</option>
+                          <option value="0_50km">0-50 km</option>
+                          <option value="50_100km">50-100 km</option>
+                          <option value="100_200km">100-200 km</option>
+                          <option value="200km_plus">200+ km</option>
+                        </select>
+                      </div>
+                      <button type="submit" className="submit-button" disabled={submitting}>
+                        {submitting ? 'Submitting...' : 'Submit Application'}
+                      </button>
+                    </form>
+                  </>
+                )}
               </div>
             </div>
           )}
@@ -296,4 +340,3 @@ const OfferDetail = () => {
 };
 
 export default OfferDetail;
-

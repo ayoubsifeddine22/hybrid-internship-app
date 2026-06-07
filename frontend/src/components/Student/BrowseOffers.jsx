@@ -75,6 +75,10 @@ const BrowseOffers = () => {
 
               <div className="offer-details">
                 <div className="detail-item">
+                  <span className="label">Location:</span>
+                  <span className="value">{offer.location || offer.company_location || 'Not specified'}</span>
+                </div>
+                <div className="detail-item">
                   <span className="label">Required Diploma:</span>
                   <span className="value">{offer.required_diploma?.replace(/_/g, ' ').toUpperCase()}</span>
                 </div>
